@@ -66,7 +66,7 @@ void initHTTP() {
   MDNS.begin("gammadetect");
   webServer.on("/", HTTP_GET, []() {
     webServer.sendHeader("Connection", "close");
-    webServer.send(200, "text/html", loginIndex);});
+    webServer.send(200, "text/html", loginIndex); });
   webServer.begin(); }
 
 void httpWorker() { webServer.handleClient(); }

@@ -1,5 +1,5 @@
-const char *apSSID="xxx";
-const char *apPW="xxx";
+const char *wlanSSID="xxx";
+const char *wlanPASS="xxx";
 
 #include "Counter.h"
 #include "WLAN.h"

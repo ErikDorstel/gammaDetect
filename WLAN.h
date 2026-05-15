@@ -3,7 +3,8 @@
 int wifiStatus;
 
 void initWLAN() {
-  WiFi.begin(apSSID,apPW); }
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(wlanSSID,wlanPASS); }
 
 void wlanWorker() {
   static uint32_t wlanTimer1=millis()+60000;
