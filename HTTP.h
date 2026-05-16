@@ -64,7 +64,7 @@ function id(id) { return document.getElementById(id); }
 
 void initHTTP() {
   MDNS.begin("gammadetect");
-  webServer.on("/", HTTP_GET, []() {
+  webServer.on("/", HTTP_GET, []() { start=1;
     webServer.sendHeader("Connection", "close");
     webServer.send(200, "text/html", loginIndex); });
   webServer.begin(); }
