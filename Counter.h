@@ -2,17 +2,24 @@
 
 WebSocketsServer stream=WebSocketsServer(81);
 
+#define memoryDepthSec 300
+#define memoryDepthMin 300
+
 volatile uint8_t count=0;
-uint32_t counterMemory[1440],pointerMemory;
+uint32_t counterMemorySec[memoryDepthSec],pointerMemorySec;
+uint32_t counterMemoryMin[memoryDepthMin],pointerMemoryMin;
 
 void ISR() { count++; }
 
 void streamEvent(uint8_t num,WStype_t type,uint8_t * payload,size_t length) {
   switch(type) {
     case WStype_CONNECTED: { Serial.print(stream.connectedClients()); Serial.println(" WebSocket clients connected.");
-      if (counterMemory[pointerMemory]>0) {
-        for (int n=pointerMemory;n<1440;n++) { stream.broadcastTXT(String(counterMemory[n]).c_str()); } }
-      for (int n=0;n<pointerMemory;n++) { stream.broadcastTXT(String(counterMemory[n]).c_str()); } }
+      if (counterMemoryMin[pointerMemoryMin]>0) {
+        for (int n=pointerMemoryMin;n<memoryDepthMin;n++) { stream.broadcastTXT(String(counterMemoryMin[n]).c_str()); } }
+      for (int n=0;n<pointerMemoryMin;n++) { stream.broadcastTXT(String(counterMemoryMin[n]).c_str()); }
+      if (counterMemorySec[pointerMemorySec]>0) {
+        for (int n=pointerMemorySec;n<memoryDepthSec;n++) { stream.broadcastTXT(String(counterMemorySec[n]).c_str()); } }
+      for (int n=0;n<pointerMemorySec;n++) { stream.broadcastTXT(String(counterMemorySec[n]).c_str()); } }
     case WStype_DISCONNECTED: { Serial.print(stream.connectedClients()); Serial.println(" WebSocket clients connected."); }
     case WStype_TEXT: { }
     case WStype_BIN: { }
@@ -35,7 +42,8 @@ void counterWorker() {
     Serial.print("CPM: "); Serial.print(counterSum);
     Serial.print(" µSv/h: "); Serial.println((float)counterSum/151);
     if (stream.connectedClients()>0) { stream.broadcastTXT(String(counterSum).c_str()); }
-    if (pointer==59) { counterMemory[pointerMemory]=counterSum; pointerMemory++; pointerMemory%=1440; }
+    counterMemorySec[pointerMemorySec]=counterSum; pointerMemorySec++; pointerMemorySec%=memoryDepthSec;
+    if (pointer==59) { counterMemoryMin[pointerMemoryMin]=counterSum; pointerMemoryMin++; pointerMemoryMin%=memoryDepthMin; }
     pointer++; pointer%=60;
     counterSum-=counter[pointer];
     counter[pointer]=0; } }
